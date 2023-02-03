@@ -1,25 +1,29 @@
 package com.example.UnitTestDemo;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.Duration;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@TestMethodOrder(MethodOrderer.DisplayName.class)
 class UnitTestDemoApplicationTests {
 
 	DemoUtils demoUtils;
 
 	@Test
 	@DisplayName("Equals and not Equals")
+	@Disabled
 	void testEqualsAndNotEquals() {
 
 		int expected = 6;
 		int unexpected = 8;
 
-		int actual = demoUtils.add(2,4);
+		int actual = demoUtils.add(2,5);
 
 		assertEquals(expected, actual, "2+4 must be 6");
 		assertNotEquals(unexpected, actual, "2+4 must not be 6");
@@ -27,6 +31,7 @@ class UnitTestDemoApplicationTests {
 
 	@Test
 	@DisplayName("Null or Not Null")
+	@EnabledOnOs(OS.MAC)
 	void testNullOrNotNull() {
 
 		String str1 = null;
@@ -38,6 +43,7 @@ class UnitTestDemoApplicationTests {
 
 	@Test
 	@DisplayName("Same and Not Same")
+	@EnabledOnJre(JRE.JAVA_11) //Correct JRE version is JAVA_17
 	void testSameAndNotSame() {
 
 		String str = "luv2code";
@@ -51,6 +57,7 @@ class UnitTestDemoApplicationTests {
 
 	@Test
 	@DisplayName("True and False")
+	@EnabledIfEnvironmentVariable(named="Environment", matches="Variable")
 	void testTrueFalse() {
 
 		int num1 = 10;
@@ -65,6 +72,7 @@ class UnitTestDemoApplicationTests {
 
 	@Test
 	@DisplayName("Array Equals")
+	@EnabledIfSystemProperty(named="System", matches="Property")
 	void testArrayEquals() {
 
 		String[] stringArray = {"A", "B", "C"};
@@ -94,6 +102,24 @@ class UnitTestDemoApplicationTests {
 		assertLinesMatch(theList, demoUtils.getNameInList(),
 				"Lines should match");
 
+	}
+
+	@Test
+	@DisplayName("Throws and Does Not Throw")
+	void testThrowsAndDoesNotThrow() {
+
+		assertThrows(Exception.class, () -> demoUtils.throwException(-1),
+				"Should throw exception");
+
+		assertDoesNotThrow(() -> demoUtils.throwException(5), "Should not throw exception");
+	}
+
+	@Test
+	@DisplayName("Timeout Test")
+	void testTimeout() {
+
+		assertTimeoutPreemptively(Duration.ofSeconds(3), () -> demoUtils.checkTimeout(),
+				"Method should execute in 3 seconds");
 	}
 
 	@BeforeEach
