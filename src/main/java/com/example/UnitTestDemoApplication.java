@@ -1,4 +1,4 @@
-package com.example.UnitTestDemo;
+package com.example;
 
 import com.example.tdd.FizzBuzz;
 import org.springframework.boot.SpringApplication;

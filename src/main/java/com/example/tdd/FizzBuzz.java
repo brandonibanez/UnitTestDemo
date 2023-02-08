@@ -1,5 +1,8 @@
 package com.example.tdd;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class FizzBuzz {
 
     public String compute(int i) {
